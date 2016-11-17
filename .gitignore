@@ -1,5 +1,4 @@
 # Created by .ignore support plugin (hsz.mobi)
 .vagrant
-driftermacros/.DS_Store
 .idea
-
+.DS_Store
