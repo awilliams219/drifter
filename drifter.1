@@ -1,0 +1,111 @@
+.\" Manpage for drifter
+.\" Contact awilliams@petsafe.net to correct errors or types.
+.TH drifter 1 "11 Nov 2016" "1.3" "drifter man page"
+.SH NAME
+.B drifter
+\- Convenience wrapper for Vagrant
+.SH SYNOPSIS
+.B drifter
+[\-\-debug] [COMMAND] [PARAMETERS]
+.SH DESCRIPTION
+Drifter is a wrapper for the popular virtualization provider vagrant.  Drifter checks parent directories for required vagrant files, and also adds the ability to execute user-defined macros, simplifying thee user's vagrant workflow.
+.SH OPTIONS
+.TP
+.B \-\-debug
+Puts drifter into debug mode, which displays its status as it goes.
+.TP
+.B [COMMAND]
+Either a drifter macro, a drifter internal command, or a vagrant command.  See the macro sections below.  Drifter will first check if the passed command is a macro.  If not, it will check if the command is an internal command.  Failing that, it will pass [COMMAND] and [PARAMETERS] to vagrant for handling.
+.TP
+.B [PARAMETERS]
+Whatever parameters are required for the indicated command.
+.SH INTERNAL COMMANDS
+Internal commands are handled by drifter directly.  These are not passed to vagrant, and do not require a macro to be created.
+.br
+.TP
+.B help
+Displays drifter's full help.
+.TP
+.B macrohelp
+Displays help on creating macros.
+.TP
+.B drifterhelp
+Displays information about executing drifter.
+.TP
+.B addmacro [MACRO]
+Installs a macro file indicated by [MACRO].
+.TP
+.B removemacro [MACRO]
+Remove a macro file indicated by [MACRO]
+.br
+.SH MACRO VARIABLES:
+Certain environment variables are made available to the macro script.  Access these in whatever way is appropriate for your chosen scripting language.
+.br
+.TP
+.TP
+.B $VAGRANTFILEPATH
+The location of the Vagrantfile detected in the parent tree
+.TP
+.B $RUNPATH
+The vagrant executable including full path
+.TP
+.B $SCRIPTDIR
+The location of the drifter script
+.TP
+.B $MACRODIR
+The location of the macro files
+.TP
+.B $DEBUG
+Debug mode flag.  Will be 0 or 1 indicated whether the user specified --debug on the command line.
+.SH MACRO FUNCTIONS
+These functions exist as BASH shell functions.  The are available from macros written in BASH, as well as any other scripting languages that give access to exported shell functions.
+.br
+.TP
+.B getVagrantStatus
+Sets a variable called $VAGRANTSTATUS containing the status of all defined vagrant machines
+.TP
+.B runVagrantCommand
+Runs vagrant using the selected executable and Vagrantfile.  Options passed to this function will be passed directly to vagrant
+.TP
+.B debug_dump
+Outputs text to the console, but only if --debug has been specified on the command line.
+.SH MACRO OVERRIDES
+If a macro and an internal command or vagrant function share a name, the macro takes priority.
+This can be used to override an internal command or vagrant function.
+.br
+.SH MACRO DIRECTIVES
+.br
+The 2nd line of the macro, below the shebang line, is used for macro directives.
+Create a comment in whatever way is appropriate for the interpreter, and place any number of the following
+on that line to apply the indicated flag to the macro.  Please note that ALL directives used must appear on the 2nd line of the macro file.
+.br
+.TP
+.B @RequireVagrantFile
+Informs drifter that the macro requires a VagrantFile.  This will initiate a search for the VagrantFile in the parent tree and set the associated variables.  Note that a macro marked @RequireVagrantFile will NOT run without a VagrantFile somewhere in the parent tree.
+.TP
+.B @RequireVagrantPath
+Informs drifter that the macro requires access to the vagrant executable, initiating a search for the vagrant executable.
+.SH EXIT STATUS
+Drifter returns 0 on a successful exit.  Error codes begin at 10 and go up depending on the error.
+.br
+.TP
+10
+Could not locate vagrant executable.  Ensure that vagrant is in your path or that its location is set in the VAGRANTPATH environment variable.
+.TP
+11
+Could not locate VagrantFile.  Ensure that it is either in the current directory or in a parent directory between the current directory and root.
+.TP
+20
+\'addmacro' called, but no macro file specified
+.TP
+21
+\'addmacro' called, but indicated macro file does not exist
+.TP
+22
+\'addmacro' called, but user could not provide admin credentials for installation
+.SH SEE ALSO
+vagrant(1)
+.SH BUGS
+No known bugs.
+.SH AUTHOR
+Adam Williams, Radio Systems Corp.

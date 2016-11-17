@@ -1,0 +1,18 @@
+#!/bin/bash
+## @RequireVagrantFile @RequireVagrantPath
+
+debug_dump "Getting current directory..."
+CURDIR=$(pwd);
+debug_dump "... $CURDIR"
+
+debug_dump "Getting path relative to VagrantFile"
+RELDIR=${CURDIR#${VAGRANTFILEPATH}}
+debug_dump "... $RELDIR"
+
+
+pushd "${VAGRANTFILEPATH}" 2>&1 > /dev/null
+
+debug_dump "Attempting ssh login..."
+"$RUNPATH" ssh -c "cd /vagrant/$RELDIR; bash"
+
+popd 2>&1 > /dev/null
