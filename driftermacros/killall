@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# @RequireVagrantPath
+
+GLOBALSTATUS=$(vagrant global-status | tail -n +3 | tail -r | tail -n +8);
+debug_dump "Starting running instance check"
+if [ "$2" == "-s" ] || [ "$2" == "suspend" ] || [ "$2" == "--suspend" ]; then
+    OPERATION=suspend
+    debug_dump "User specified suspend action"
+else
+    OPERATION=halt
+    debug_dump "Halt action assumed"
+fi
+
+while read -r instance; do
+    status=$(echo $instance | awk '{ print $4 }')
+    id=$(echo $instance | awk '{ print $1 }')
+    name=$(echo $instance | awk '{ print $2 }')
+    instancepath=$(echo $instance | awk '{ print $5 }')
+
+    debug_dump "Checking if $id is running"
+    if [ "$status" == "running" ]; then
+        debug_dump "... it is"
+        pushd $instancepath > /dev/null
+        debug_dump "${OPERATION}ing instance $id ($name)..."
+        $RUNPATH $OPERATION > /dev/null
+        popd
+    else
+        debug_dump "... it is not"
+    fi;
+done <<< "$GLOBALSTATUS"
+
+debug_dump Complete
