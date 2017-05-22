@@ -306,7 +306,7 @@ function findVagrantfile () {
 
 function getVagrantStatus() {
    # MAGIC.  Trims the fat from the vagrant global status.
-   export VAGRANTSTATUS=$(vagrant global-status | sed '1,2d' | sed -n -e :a -e '1,7!{P;N;D;};N;ba')
+   export VAGRANTSTATUS=$(vagrant global-status 2>/dev/null | sed '1,2d' | sed -n -e :a -e '1,7!{P;N;D;};N;ba')
 }
 
 
