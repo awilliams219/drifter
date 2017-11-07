@@ -17,4 +17,9 @@ if [[ ! -d "/usr/local/bin/driftermacros" ]]; then
     sudo mkdir /usr/local/bin/driftermacros;
 fi;
 
+if [[ -d "./driftermacros" ]]; then
+    sudo cp drftermacros/* /usr/local/bin/driftermacros;
+    sudo chmod +x /usr/local/bin/driftermacros/*;
+fi;
+
 sudo -k
