@@ -93,6 +93,7 @@ function macrohelp() {
     echo "\$SCRIPTDIR          :  The location of the drifter script"
     echo "\$MACRODIR           :  The location of the macro files"
     echo "\$DEBUG              :  Debug mode flag -- use for macro debugging"
+    echo "\$WORKPATH           :  Location of vagrantenv file"
     echo " "
     echo "Functions:"
     echo "getVagrantStatus    :  Sets a variable called \$VAGRANTSTATUS containing"
@@ -131,6 +132,14 @@ function drifterhelp() {
     echo "it to do."
     echo " "
     echo "Any arguments after {command} will be passed to {command} in the same order as they appear on the command line."
+    echo " "
+    echo "Vagrant environment can be configured by way of a file called vagrantenv located somewhere in the parent tree."
+    echo "To use, create a file called 'vagrantenv' in the root directory of your project, and configure your environment as"
+    echo "shown:"
+    echo " "
+    echo "Example File:"
+    echo 'VAGRANTFILEPATH="../some_other_project"'
+    echo 'export SOMEIMPORTANTENVVAR="stuff you need to access from your VagrantFile"'
     echo " "
 }
 
@@ -274,33 +283,53 @@ function traverseBack() {
     debug_dump "Back at $(pwd)";
 }
 
-function findVagrantfile () {
 
-    VAGRANTFILEPATH=
 
-    if [ -e "VagrantFile" ]; then
-        VAGRANTFILEPATH='.';
+function findFile () {
+    FILENAME=$1;
+
+    FILEPATH=
+
+    if [[ -e ${FILENAME} ]]; then
+        FILEPATH='.';
     else
         DIRCOUNTER=0;
-        debug_dump "Beginning VagrantFile search."
+        debug_dump "Beginning ${FILENAME} search."
         debug_dump "Current Dir: $(pwd)"
-        while [ ! -e "VagrantFile" ] && [ ! "$(pwd)" == "/" ]; do
+        while [ ! -e ${FILENAME} ] && [ ! "$(pwd)" == "/" ]; do
             debug_dump "Checking $(pwd)"
             pushd .. 2>&1 > /dev/null
             let DIRCOUNTER+=1
         done;
-        if [ -e "VagrantFile" ]; then
-            VAGRANTFILEPATH="$(pwd)";
-            debug_dump "VagrantFile located at $VAGRANTFILEPATH"
+        if [ -e ${FILENAME} ]; then
+            FILEPATH="$(pwd)";
+            debug_dump "${FILENAME} located at $FILEPATH"
             traverseBack ${DIRCOUNTER}
         else
-            debug_dump "No VagrantFile located before root"
+            debug_dump "No ${FILENAME} located before root"
             traverseBack ${DIRCOUNTER}
 
-            echo "Cannot locate VagrantFile in parent tree.  Are you sure this project uses it?"
-            exit 11;
-
+            echo "Cannot locate ${FILENAME} in parent tree.  Are you sure this project uses it?"
         fi;
+    fi;
+}
+
+function findVagrantFile() {
+    findFile "VagrantFile"
+    VAGRANTFILEPATH=${FILEPATH};
+    if [ -e ${VAGRANTFILEPATH} ]; then
+        exit 11;
+    fi;
+}
+
+function getVagrantEnv() {
+    debug_dump "Searching for environment configuration"
+    findFile "vagrantenv"
+    ENVFILE=${FILEPATH};
+    if [[ ! ${ENVFILE} == "" ]]; then
+        debug_dump "Environment configuration found.  Loading."
+        WORKPATH="${ENVFILE}/"
+        source "${ENVFILE}/vagrantenv"
     fi;
 }
 
@@ -311,7 +340,8 @@ function getVagrantStatus() {
 
 
 function runVagrantCommand () {
-    pushd "$VAGRANTFILEPATH" 2>&1 > /dev/null
+
+    pushd "${WORKPATH}${VAGRANTFILEPATH}" 2>&1 > /dev/null
 
     debug_dump "Vagrantfile Path: $VAGRANTFILEPATH";
     debug_dump "Vagrant command : $RUNPATH $@";
@@ -358,8 +388,12 @@ case ${is_command_or_macro} in
         debug_dump "Executing macro"
         checkIfMacroRequiresVagrantFile $1
         checkIfMacroRequiresVagrant $1
+        getVagrantEnv
+
         if [[ ${REQUIRESVAGRANTFILE} -eq 1 ]]; then
-            findVagrantfile
+            if [[ ${VAGRANTFILEPATH} == "" ]]; then
+                findVagrantfile
+            fi;
         fi;
 
         if [[ ${REQUIRESVAGRANT} -eq 1 ]]; then
@@ -376,7 +410,10 @@ case ${is_command_or_macro} in
     *)
         debug_dump "Passing control to vagrant"
         detectVagrant
-        findVagrantfile
+        getVagrantEnv
+        if [[ ${VAGRANTFILEPATH} == "" ]]; then
+            findVagrantfile
+        fi;
         runVagrantCommand $@;
         exit 0
     ;;
