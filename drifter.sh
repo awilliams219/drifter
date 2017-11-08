@@ -381,6 +381,7 @@ export RUNPATH;
 export SCRIPTDIR;
 export MACRODIR;
 export DEBUG
+export WORKPATH
 export -f getVagrantStatus;
 export -f runVagrantCommand;
 export -f debug_dump;
