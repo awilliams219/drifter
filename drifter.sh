@@ -308,8 +308,6 @@ function findFile () {
         else
             debug_dump "No ${FILENAME} located before root"
             traverseBack ${DIRCOUNTER}
-
-            echo "Cannot locate ${FILENAME} in parent tree.  Are you sure this project uses it?"
         fi;
     fi;
 }
@@ -317,7 +315,14 @@ function findFile () {
 function findVagrantFile() {
     findFile "VagrantFile"
     VAGRANTFILEPATH=${FILEPATH};
-    if [ -e ${VAGRANTFILEPATH} ]; then
+    if [ ! -e ${VAGRANTFILEPATH} ]; then
+        debug_dump " "
+        echo "Cannot locate Vagrantfile in parent tree, and no VAGRANTFILEPATH override found."
+        echo "If this project uses a Vagrantfile that is not in the parent tree,"
+        echo "you may override the search by setting the VAGRANTFILEPATH environment"
+        echo "variable to the path of the Vagrantfile."
+        echo " "
+        echo "See the man page for details."
         exit 11;
     fi;
 }
@@ -392,7 +397,7 @@ case ${is_command_or_macro} in
 
         if [[ ${REQUIRESVAGRANTFILE} -eq 1 ]]; then
             if [[ ${VAGRANTFILEPATH} == "" ]]; then
-                findVagrantfile
+                findVagrantFile
             fi;
         fi;
 
@@ -412,7 +417,7 @@ case ${is_command_or_macro} in
         detectVagrant
         getVagrantEnv
         if [[ ${VAGRANTFILEPATH} == "" ]]; then
-            findVagrantfile
+            findVagrantFile
         fi;
         runVagrantCommand $@;
         exit 0
