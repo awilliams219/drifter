@@ -102,6 +102,11 @@ function macrohelp() {
     echo "                       Vagrantfile.  Options passed to this function will"
     echo "                       be passed directly to vagrant"
     echo "debug_dump          :  Outputs text to the console, but only if DEBUG=0"
+    echo "enter               :  Enter a directory and add it to the directory stack."
+    echo "                       usage: enter (directory)"
+    echo "leave               :  Leave a directory that was entered via enter."
+    echo "                       Will return to the directory we were in prior to"
+    echo "                       calling enter."
     echo " "
     echo "Overriding:"
     echo "If a macro and an internal command or vagrant function share a name, the macro takes priority."
@@ -375,6 +380,15 @@ function trapNoCommandState() {
     fi;
 }
 
+function enter() {
+    DIR=$1;
+    pushd "${DIR}" 2>&1 > /dev/null;
+}
+
+function leave() {
+    popd 2>&1 > /dev/null;
+}
+
 ## Making some stuff available to macros
 export VAGRANTFILEPATH;
 export RUNPATH;
@@ -385,6 +399,8 @@ export WORKPATH
 export -f getVagrantStatus;
 export -f runVagrantCommand;
 export -f debug_dump;
+export -f enter;
+export -f leave;
 
 
 # Let's get this train rolling.
