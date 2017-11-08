@@ -2,6 +2,8 @@
 
 ## Configuration.  Change these as needed for your setup.
 MACRODIRNAME=driftermacros
+DRIFTERVERSION=1.4.4
+
 
 ## Internal Commands.  Don't forget to add your new command to the help() function so people know about it.
 
