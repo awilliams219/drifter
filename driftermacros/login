@@ -16,7 +16,8 @@ RELDIR=${CURDIR#${VAGRANTFILEPATH}}
 
 if [[ ${WORKPATH} == "./" ]]; then
     enter "${WORKPATH}"
-    RELDIR=$(pwd);
+    WORKPATHABS=$(pwd);
+    RELDIR=${CURDIR#${WORKPATHABS}}
     leave
 elif [[ ! ${WORKPATH} == "" ]]; then
     RELDIR=${CURDIR#${WORKPATH}}
