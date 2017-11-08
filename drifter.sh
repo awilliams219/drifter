@@ -345,7 +345,9 @@ function getVagrantStatus() {
 
 
 function runVagrantCommand () {
-
+    if [[ ${VAGRANTFILEPATH} =~ ^/ ]]; then
+        WORKPATH=""
+    fi;
     pushd "${WORKPATH}${VAGRANTFILEPATH}" 2>&1 > /dev/null
 
     debug_dump "Vagrantfile Path: $VAGRANTFILEPATH";
