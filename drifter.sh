@@ -7,6 +7,12 @@ DRIFTERVERSION=1.4.4
 
 ## Internal Commands.  Don't forget to add your new command to the help() function so people know about it.
 
+# If you're unsure as to whether what you're adding should be an internal command or a macro, it should
+# probably be a macro.  Internal commands are only for functions that need to be considered core functionality.
+
+# If you're adding an internal command to drifter and it needs to be available to macros, don't forget to
+# `export -f` it.
+
 #  Add any internal commands to this array, separated by spaces.  Create a function with the same name.
 INTERNALCOMMANDS=("help" "macrohelp" "drifterhelp" "addmacro" "removemacro");
 
@@ -170,7 +176,7 @@ MACRODIR=${SCRIPTDIR}/${MACRODIRNAME};
 USEMACRO=0;
 
 
-
+## Core Procedures
 function debug_dump() {
     if [ "${DEBUG}" -gt 0 ]; then
         echo "$1";
@@ -196,7 +202,7 @@ function enforceMacroFlags() {
 }
 
 function containsElement() {
-## Ignore Bash error below.  It's a bug in PHPStorm's bash parser
+## If PHPStorm flags an error below, ignore it.  It's a bug in PHPStorm's bash parser
     local needle=$1;
     shift
     local haystack=$@;
