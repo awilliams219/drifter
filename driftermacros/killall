@@ -21,10 +21,10 @@ while read -r instance; do
     debug_dump "Checking if $id is running"
     if [ "$status" == "running" ]; then
         debug_dump "... it is"
-        pushd $instancepath > /dev/null
+        enter $instancepath
         debug_dump "${OPERATION}ing instance $id ($name)..."
         $RUNPATH $OPERATION > /dev/null
-        popd > /dev/null
+        leave
     else
         debug_dump "... it is not"
     fi;

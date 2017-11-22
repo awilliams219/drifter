@@ -4,18 +4,18 @@ echo "Beginning update"
 
 debug_dump "Creating temp directory"
 UPDATE_DIR=$(mktemp -d 2>/dev/null || mktemp -d -t 'drifter')
-pushd ${UPDATE_DIR} 2>&1 > /dev/null
+enter ${UPDATE_DIR}
 
 debug_dump "Pulling from repo"
 git clone https://github.com/RadioSystems/drifter.git
 
 debug_dump "Calling installer."
-pushd drifter 2>&1 > /dev/null
+enter drifter
 
 echo "Enter your local user account admin password:"
 ./install.sh
 
-popd 2>&1 > /dev/null
+leave
 
 echo "Update complete"
 

@@ -80,6 +80,12 @@ Runs vagrant using the selected executable and Vagrantfile.  Options passed to t
 .TP
 .B debug_dump
 Outputs text to the console, but only if --debug has been specified on the command line.
+.TP
+.B enter
+Adds the current directory to the navigation stack and changes into the indicated directory.  (This is functionally identical to pushd, but suppresses the output)
+.TP
+.B leave
+Pops the top directory from the navigation stack and navigates to it.  (This is functionally identical to popd, but suppresses the output)
 .SH MACRO OVERRIDES
 If a macro and an internal command or vagrant function share a name, the macro takes priority.
 This can be used to override an internal command or vagrant function.

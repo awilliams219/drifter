@@ -177,6 +177,14 @@ function debug_dump() {
     fi;
 }
 
+function enter() {
+    pushd $* 2>&1 > /dev/null;
+}
+
+function leave() {
+    popd $* 2>&1 > /dev/null;
+}
+
 function enforceMacroFlags() {
 # $1 = name of macro script
     FLAGSLINE=$(cat $1 | head -n2 | tail -n1);
@@ -284,7 +292,7 @@ function traverseBack() {
     DEPTH=$1;
     while [ ${DEPTH} -gt 0 ]; do
         debug_dump "Traversing back to $(pwd)"
-        popd 2>&1 > /dev/null
+        leave;
         let DEPTH-=1;
     done;
     debug_dump "Back at $(pwd)";
@@ -305,7 +313,7 @@ function findFile () {
         debug_dump "Current Dir: $(pwd)"
         while [ ! -e ${FILENAME} ] && [ ! "$(pwd)" == "/" ]; do
             debug_dump "Checking $(pwd)"
-            pushd .. 2>&1 > /dev/null
+            enter ..
             let DIRCOUNTER+=1
         done;
         if [ -e ${FILENAME} ]; then
@@ -355,13 +363,22 @@ function runVagrantCommand () {
     if [[ ${VAGRANTFILEPATH} =~ ^/ ]]; then
         WORKPATH=""
     fi;
-    pushd "${WORKPATH}${VAGRANTFILEPATH}" 2>&1 > /dev/null
+
+    ## Suppress pushd error if we're running without a vagrantfile.  We'll let vagrant handle the error messaging
+    if [[ ! ${VAGRANTFILEPATH} == "" ]]; then
+        enter "${WORKPATH}${VAGRANTFILEPATH}"
+    fi;
 
     debug_dump "Vagrantfile Path: $VAGRANTFILEPATH";
     debug_dump "Vagrant command : $RUNPATH $@";
 
     "$RUNPATH" $@
-    popd 2>&1 > /dev/null
+
+    ## Samesies
+    if [[ ! ${VAGRANTFILEPATH} == "" ]]; then
+        leave
+    fi;
+
 }
 
 function executeMacro () {
@@ -380,15 +397,6 @@ function trapNoCommandState() {
         drifterhelp
         exit 0;
     fi;
-}
-
-function enter() {
-    DIR=$1;
-    pushd "${DIR}" 2>&1 > /dev/null;
-}
-
-function leave() {
-    popd 2>&1 > /dev/null;
 }
 
 ## Making some stuff available to macros

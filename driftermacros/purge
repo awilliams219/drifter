@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pushd ~/.vagrant.d/tmp 2>&1 > /dev/null
+enter ~/.vagrant.d/tmp
 
 CURRENTDIR=$(pwd);
 
@@ -8,5 +8,4 @@ if [[ ${CURRENTDIR} == *".vagrant.d/tmp"* ]]; then
     rm -f box*
 fi
 
-popd 2>&1 > /dev/null
-
+leave
