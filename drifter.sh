@@ -2,7 +2,7 @@
 
 ## Configuration.  Change these as needed for your setup.
 MACRODIRNAME=driftermacros
-DRIFTERVERSION=1.4.4
+DRIFTERVERSION=1.4.5
 
 
 ## Internal Commands.  Don't forget to add your new command to the help() function so people know about it.
@@ -14,7 +14,7 @@ DRIFTERVERSION=1.4.4
 # `export -f` it.
 
 #  Add any internal commands to this array, separated by spaces.  Create a function with the same name.
-INTERNALCOMMANDS=("help" "macrohelp" "drifterhelp" "addmacro" "removemacro");
+INTERNALCOMMANDS=("help" "macrohelp" "drifterhelp" "addmacro" "removemacro" "version");
 
 function addmacro() {
     if [[ -z $2 ]]; then
@@ -67,6 +67,10 @@ function removemacro() {
   sudo -k
 }
 
+function version() {
+    echo "Drifter version: ${DRIFTERVERSION}"
+}
+
 function help() {
     drifterhelp
     echo "Available commands:"
@@ -77,6 +81,7 @@ function help() {
     echo "    help             :  Displays help information"
     echo "    addmacro         :  Installs a macro"
     echo "    removemacro      :  Removes a macro"
+    echo "    version          :  Display drifter version"
     echo " "
     echo " "
     echo "Macros:"
