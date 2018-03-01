@@ -1,0 +1,40 @@
+#!/bin/bash
+## @RequireVagrantFile @RequireVagrantPath
+
+if [[ ${REMOTEROOT} == "" ]]; then
+    REMOTEROOT="/vagrant"
+fi;
+
+debug_dump "Working path: ${WORKPATH}"
+
+debug_dump "Getting current directory..."
+CURDIR=$(pwd);
+debug_dump "... $CURDIR"
+
+debug_dump "Getting path relative to project root"
+RELDIR=${CURDIR#${VAGRANTFILEPATH}}
+
+if [[ ${WORKPATH} == "./" ]]; then
+    enter "${WORKPATH}"
+    WORKPATHABS=$(pwd);
+    RELDIR=${CURDIR#${WORKPATHABS}}
+    leave
+elif [[ ! ${WORKPATH} == "" ]]; then
+    RELDIR=${CURDIR#${WORKPATH}}
+fi;
+
+debug_dump "... $RELDIR"
+
+if [[ ${VAGRANTFILEPATH} =~ ^/ ]]; then
+    WORKPATH=""
+fi;
+enter "${WORKPATH}${VAGRANTFILEPATH}"
+
+debug_dump "Attempting to issue command..."
+
+shift
+debug_dump "Parameters:  $*"
+
+"$RUNPATH" ssh -c "runuser -l dev -c \"cd ${REMOTEROOT}/$RELDIR; $*\""
+
+leave
