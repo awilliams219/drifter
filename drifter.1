@@ -6,12 +6,12 @@
 \- Convenience wrapper for Vagrant
 .SH SYNOPSIS
 .B drifter
-[\-\-debug] [COMMAND] [PARAMETERS]
+[\-v] [COMMAND] [PARAMETERS]
 .SH DESCRIPTION
 Drifter is a wrapper for the popular virtualization provider vagrant.  Drifter checks parent directories for required vagrant files, and also adds the ability to execute user-defined macros, simplifying thee user's vagrant workflow.
 .SH OPTIONS
 .TP
-.B \-\-debug
+.B \-v
 Puts drifter into debug mode, which displays its status as it goes.
 .TP
 .B [COMMAND]
@@ -71,6 +71,9 @@ The location of the macro files
 .TP
 .B $DEBUG
 Debug mode flag.  Will be 0 or 1 indicated whether the user specified --debug on the command line.
+.TP
+.B $COMMANDLINEPARAMS
+Command line parameters as they were typed.  You'll need to do your own processing in your macro.
 .SH MACRO FUNCTIONS
 These functions exist as BASH shell functions.  The are available from macros written in BASH, as well as any other scripting languages that give access to exported shell functions.
 .br
@@ -116,6 +119,9 @@ Could not locate vagrant executable.  Ensure that vagrant is in your path or tha
 Could not locate VagrantFile.  Ensure that it is either in the current directory or in a parent directory between the current directory and root.  You may need to
 create a vagrantenv file somewhere in your parent tree if your vagrant machine lives somewhere else.
 .TP
+12
+User called a deprecated function and drifter was halted for safety reasons.
+.TP
 20
 \'addmacro' called, but no macro file specified
 .TP
@@ -124,6 +130,15 @@ create a vagrantenv file somewhere in your parent tree if your vagrant machine l
 .TP
 22
 \'addmacro' called, but user could not provide admin credentials for installation
+.TP
+30
+\'removemacro' called, but no macro file specified
+.TP
+31
+\'removemacro' called, but indicated macro file does not exist
+.TP
+32
+\'removemacro' called, but user could not provide admin credentials for installation
 .SH SEE ALSO
 vagrant(1)
 .SH BUGS

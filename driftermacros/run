@@ -1,6 +1,15 @@
 #!/bin/bash
 ## @RequireVagrantFile @RequireVagrantPath
 
+debug_dump "Command Line Params Passed to macro: '$COMMANDLINEPARAMS'"
+if [[ ${COMMANDLINEPARAMS} =~ -.*u(.*)$ ]]; then
+    USER=${BASH_REMATCH[1]}
+else
+    USER=dev
+fi;
+
+debug_dump "Running as user $USER"
+
 if [[ ${REMOTEROOT} == "" ]]; then
     REMOTEROOT="/vagrant"
 fi;
@@ -35,6 +44,6 @@ debug_dump "Attempting to issue command..."
 shift
 debug_dump "Parameters:  $*"
 
-"$RUNPATH" ssh -c "runuser -l dev -c \"cd ${REMOTEROOT}/$RELDIR; $*\""
+"$RUNPATH" ssh -c "runuser -l ${USER} -c \"cd ${REMOTEROOT}/$RELDIR; $*\""
 
 leave

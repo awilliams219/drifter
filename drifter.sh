@@ -2,7 +2,7 @@
 
 ## Configuration.  Change these as needed for your setup.
 MACRODIRNAME=driftermacros
-DRIFTERVERSION=1.4.5
+DRIFTERVERSION=1.4.6
 
 
 ## Internal Commands.  Don't forget to add your new command to the help() function so people know about it.
@@ -168,9 +168,21 @@ function drifterhelp() {
 
 ## Initialization
 
-if [[ $1 == "--debug" ]]; then
-    DEBUG=1;
+if [[ $1 == "--debug" ]] || [[ $2 == "--debug" ]]; then
+    echo "--debug option has been removed.  Use -v instead.  Halting for safety."
+    exit 12
+fi;
+
+if [[ "$1" =~ ^- ]]; then
+    COMMANDLINEPARAMS=$1;
     shift;
+else
+    COMMANDLINEPARAMS="";
+fi;
+
+
+if [[ ${COMMANDLINEPARAMS} =~ v ]]; then
+    DEBUG=1;
 else
     DEBUG=0;
 fi;
@@ -183,7 +195,7 @@ USEMACRO=0;
 
 ## Core Procedures
 function debug_dump() {
-    if [ "${DEBUG}" -gt 0 ]; then
+    if [[ "${DEBUG}" -gt 0 ]]; then
         echo "$1";
     fi;
 }
@@ -417,6 +429,7 @@ export SCRIPTDIR;
 export MACRODIR;
 export DEBUG
 export WORKPATH
+export COMMANDLINEPARAMS
 export -f getVagrantStatus;
 export -f runVagrantCommand;
 export -f debug_dump;
