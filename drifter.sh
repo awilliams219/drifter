@@ -181,7 +181,7 @@ else
 fi;
 
 
-if [[ ${COMMANDLINEPARAMS} =~ v ]]; then
+if [[ ${COMMANDLINEPARAMS} =~ -v ]]; then
     DEBUG=1;
 else
     DEBUG=0;
