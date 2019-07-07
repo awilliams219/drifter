@@ -7,7 +7,7 @@ UPDATE_DIR=$(mktemp -d 2>/dev/null || mktemp -d -t 'drifter')
 enter ${UPDATE_DIR}
 
 debug_dump "Pulling from repo"
-git clone https://github.com/RadioSystems/drifter.git
+git clone https://github.com/awilliams219/drifter.git
 
 debug_dump "Calling installer."
 enter drifter
