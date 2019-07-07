@@ -39,9 +39,3 @@ follow these steps:
 Macros are external commands that extend drifter's capabilities. These are shell scripts located in the directory
 named in the MACRODIR variable at the top of the drifter.sh file.  See ```drifter macrohelp``` or the man page for
 information on writing drifter macros.
-
-# License
-Written by and for the use of Radio Systems Corporation only.  
-
-
-
